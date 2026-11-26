@@ -1,8 +1,12 @@
 # Registro delle modifiche
 
+## 1.0.1
+- Il pannello è sotto il menu **LU3G** (LU3G Hub), come gli altri plugin LU3G, non più in Impostazioni. Senza LU3G Hub
+  compare la voce "LU3G Manutenzione" nel menu laterale.
+
 ## 1.0.0
 Prima versione.
-- **Modalità manutenzione** (Impostazioni → Manutenzione): i visitatori vedono una schermata con il logo LU3G (oppure
+- **Modalità manutenzione** (LU3G → Manutenzione): i visitatori vedono una schermata con il logo LU3G (oppure
   il logo del sito o un'immagine a scelta), titolo, messaggio e una riga in evidenza facoltativa. Stato HTTP 503 con
   Retry-After, noindex, mai salvata in cache.
 - **Lucchetto in alto a destra**: apre una finestra di accesso che invia le credenziali alla normale pagina di accesso di

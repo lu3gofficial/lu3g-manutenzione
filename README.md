@@ -4,7 +4,7 @@ Plugin WordPress di LU3G Agenzia Web: mette il sito in manutenzione. I visitator
 LU3G; dal **lucchetto in alto a destra** chi ha un account accede con le credenziali del sito e lo vede normalmente.
 
 ## Uso
-**Impostazioni → Manutenzione**
+**LU3G → Manutenzione**
 - *Modalità manutenzione*: accende o spegne la schermata. Al salvataggio la cache delle pagine viene svuotata.
 - *Testi*: titolo, messaggio, riga in evidenza facoltativa (es. "Torniamo online lunedì 1 dicembre").
 - *Logo*: LU3G (predefinito), logo del sito, immagine dalla Libreria media.

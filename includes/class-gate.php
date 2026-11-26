@@ -135,7 +135,7 @@ final class LU3G_Manutenzione_Gate {
 			array(
 				'id'    => 'lu3g-manutenzione',
 				'title' => '<span class="ab-icon dashicons dashicons-lock" aria-hidden="true"></span>' . esc_html__( 'Manutenzione attiva', 'lu3g-manutenzione' ),
-				'href'  => admin_url( 'options-general.php?page=lu3g-manutenzione' ),
+				'href'  => admin_url( 'admin.php?page=lu3g-manutenzione' ),
 				'meta'  => array( 'title' => __( 'I visitatori vedono la schermata di manutenzione', 'lu3g-manutenzione' ) ),
 			)
 		);

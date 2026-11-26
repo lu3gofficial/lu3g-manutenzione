@@ -1,6 +1,6 @@
 <?php
 /**
- * Pannello Impostazioni → Manutenzione.
+ * Pannello LU3G → Manutenzione (sotto il menu di LU3G Hub; senza Hub, voce "LU3G Manutenzione").
  * Salvataggio da admin-post con nonce e permesso manage_options. Se lo stato cambia (o cambiano i testi a manutenzione
  * accesa) svuota la cache delle pagine e lo dice nel messaggio.
  */
@@ -15,18 +15,25 @@ final class LU3G_Manutenzione_Admin {
 	const CAP  = 'manage_options';
 
 	public static function init() {
-		add_action( 'admin_menu', array( __CLASS__, 'menu' ) );
+		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 20 ); // dopo LU3G Hub (priorità 10)
 		add_action( 'admin_post_lu3g_manutenzione_save', array( __CLASS__, 'save' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( LU3G_MANUTENZIONE_FILE ), array( __CLASS__, 'links' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'notice' ) );
 	}
 
 	public static function url( $args = array() ) {
-		return add_query_arg( array_merge( array( 'page' => self::PAGE ), $args ), admin_url( 'options-general.php' ) );
+		return add_query_arg( array_merge( array( 'page' => self::PAGE ), $args ), admin_url( 'admin.php' ) );
 	}
 
+	/** Sotto il menu "LU3G" di LU3G Hub, come gli altri plugin LU3G; senza Hub, voce propria "LU3G Manutenzione". */
 	public static function menu() {
-		$hook = add_options_page( __( 'Manutenzione', 'lu3g-manutenzione' ), __( 'Manutenzione', 'lu3g-manutenzione' ), self::CAP, self::PAGE, array( __CLASS__, 'render' ) );
+		global $admin_page_hooks;
+		if ( isset( $admin_page_hooks['lu3g-hub'] ) ) {
+			$hook = add_submenu_page( 'lu3g-hub', 'LU3G Manutenzione', __( 'Manutenzione', 'lu3g-manutenzione' ), self::CAP, self::PAGE, array( __CLASS__, 'render' ) );
+		} else {
+			$svg  = (string) file_get_contents( LU3G_MANUTENZIONE_PATH . 'assets/lu3g-icon.svg' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$hook = add_menu_page( 'LU3G Manutenzione', 'LU3G Manutenzione', self::CAP, self::PAGE, array( __CLASS__, 'render' ), 'data:image/svg+xml;base64,' . base64_encode( $svg ), 83 ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		}
 		add_action( 'load-' . $hook, array( __CLASS__, 'load' ) );
 	}
 
