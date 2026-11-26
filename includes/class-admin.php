@@ -107,6 +107,11 @@ final class LU3G_Manutenzione_Admin {
 		);
 	}
 
+	/** Titolo della card con una riga di spiegazione. */
+	private static function head( $title, $desc = '' ) {
+		return '<div class="lm-card__head"><h3>' . esc_html( $title ) . '</h3>' . ( $desc ? '<p>' . esc_html( $desc ) . '</p>' : '' ) . '</div>';
+	}
+
 	public static function render() {
 		$s      = LU3G_Manutenzione_Settings::get();
 		$active = LU3G_Manutenzione_Gate::is_active();
@@ -147,40 +152,46 @@ final class LU3G_Manutenzione_Admin {
 		wp_nonce_field( 'lu3g_manutenzione_save' );
 		echo '<input type="hidden" name="action" value="lu3g_manutenzione_save">';
 
-		echo '<div class="lm-card lm-card--switch">';
+		// Interruttore principale, con lo stato accanto.
+		echo '<section class="lm-card lm-card--switch' . ( $s['enabled'] ? ' is-on' : '' ) . '">';
 		self::toggle( 'enabled', __( 'Modalità manutenzione', 'lu3g-manutenzione' ), $s['enabled'], __( 'Accesa: i visitatori vedono la schermata (stato HTTP 503, Google la considera temporanea). La bacheca e la pagina di accesso restano raggiungibili. Al salvataggio la cache delle pagine viene svuotata.', 'lu3g-manutenzione' ) );
-		echo '</div>';
+		echo '<span class="lm-pill ' . ( $s['enabled'] ? 'is-on' : 'is-off' ) . '">' . ( $s['enabled'] ? esc_html__( 'Accesa', 'lu3g-manutenzione' ) : esc_html__( 'Spenta', 'lu3g-manutenzione' ) ) . '</span></section>';
 
-		echo '<div class="lm-card"><h3>' . esc_html__( 'Testi della schermata', 'lu3g-manutenzione' ) . '</h3><div class="lm-grid">';
+		// Testi.
+		echo '<section class="lm-card">' . self::head( __( 'Testi della schermata', 'lu3g-manutenzione' ), __( 'Quello che leggono i visitatori sotto il logo.', 'lu3g-manutenzione' ) ) . '<div class="lm-grid">'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- head() fa l'escape
 		printf( '<label class="lm-field"><span>%1$s</span><input type="text" class="lm-input" name="lu3g_m[title]" value="%2$s" maxlength="120"></label>', esc_html__( 'Titolo', 'lu3g-manutenzione' ), esc_attr( $s['title'] ) );
 		printf( '<label class="lm-field"><span>%1$s</span><input type="text" class="lm-input" name="lu3g_m[note]" value="%2$s" maxlength="120" placeholder="%3$s"><small>%4$s</small></label>', esc_html__( 'Riga in evidenza (facoltativa)', 'lu3g-manutenzione' ), esc_attr( $s['note'] ), esc_attr__( 'Torniamo online lunedì 1 dicembre', 'lu3g-manutenzione' ), esc_html__( 'Compare sotto il messaggio, con un pallino arancione.', 'lu3g-manutenzione' ) );
 		printf( '<label class="lm-field lm-field--wide"><span>%1$s</span><textarea class="lm-input" name="lu3g_m[message]" rows="3">%2$s</textarea></label>', esc_html__( 'Messaggio', 'lu3g-manutenzione' ), esc_textarea( $s['message'] ) );
-		echo '</div></div>';
+		echo '</div></section>';
 
-		echo '<div class="lm-card"><h3>' . esc_html__( 'Logo', 'lu3g-manutenzione' ) . '</h3><div class="lm-logos" role="radiogroup">';
-		$opts = array(
-			'lu3g'   => array( __( 'Logo LU3G', 'lu3g-manutenzione' ), '<span class="lm-logos__svg">' . $logo . '</span>' ),
-			'site'   => array( __( 'Logo del sito', 'lu3g-manutenzione' ), $site ? '<img src="' . esc_url( $site ) . '" alt="">' : '<em>' . esc_html__( 'Non impostato in Aspetto → Personalizza', 'lu3g-manutenzione' ) . '</em>' ),
-			'custom' => array( __( 'Immagine a scelta', 'lu3g-manutenzione' ), '<img src="' . esc_url( $custom ) . '" alt="" data-lm-logo-img' . ( $custom ? '' : ' hidden' ) . '><button type="button" class="lm-btn lm-btn--small" data-lm-pick>' . esc_html__( 'Scegli immagine', 'lu3g-manutenzione' ) . '</button>' ),
+		// Logo: tre scelte con anteprima su sfondo scuro, come nella schermata.
+		echo '<section class="lm-card">' . self::head( __( 'Logo', 'lu3g-manutenzione' ), __( 'Su sfondo scuro, come nella schermata. Se il logo del sito o l\'immagine scelta mancano, si vede il logo LU3G.', 'lu3g-manutenzione' ) ) . '<div class="lm-logos" role="radiogroup" aria-label="' . esc_attr__( 'Logo', 'lu3g-manutenzione' ) . '">'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- head() fa l'escape
+		$empty = '<span class="lm-logo__empty">%s</span>';
+		$opts  = array(
+			'lu3g'   => array( __( 'Logo LU3G', 'lu3g-manutenzione' ), '<span class="lm-logo__svg">' . $logo . '</span>', '' ),
+			'site'   => array( __( 'Logo del sito', 'lu3g-manutenzione' ), $site ? '<img src="' . esc_url( $site ) . '" alt="">' : sprintf( $empty, esc_html__( 'Non impostato in Aspetto → Personalizza', 'lu3g-manutenzione' ) ), '' ),
+			'custom' => array( __( 'Immagine a scelta', 'lu3g-manutenzione' ), '<img src="' . esc_url( $custom ) . '" alt="" data-lm-logo-img' . ( $custom ? '' : ' hidden' ) . '>' . sprintf( str_replace( 'class=', 'data-lm-logo-empty' . ( $custom ? ' hidden' : '' ) . ' class=', $empty ), esc_html__( 'Nessuna immagine', 'lu3g-manutenzione' ) ), '<button type="button" class="lm-btn lm-btn--small" data-lm-pick>' . ( $custom ? esc_html__( 'Cambia immagine', 'lu3g-manutenzione' ) : esc_html__( 'Scegli immagine', 'lu3g-manutenzione' ) ) . '</button>' ),
 		);
 		foreach ( $opts as $k => $o ) {
-			echo '<label class="lm-logo' . ( $s['logo'] === $k ? ' is-checked' : '' ) . '"><input type="radio" name="lu3g_m[logo]" value="' . esc_attr( $k ) . '" ' . checked( $s['logo'], $k, false ) . '><span class="lm-logo__pic">' . $o[1] . '</span><strong>' . esc_html( $o[0] ) . '</strong></label>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML costruito qui con valori già filtrati
+			echo '<div class="lm-logo' . ( $s['logo'] === $k ? ' is-checked' : '' ) . '"><label class="lm-logo__main"><input type="radio" name="lu3g_m[logo]" value="' . esc_attr( $k ) . '" ' . checked( $s['logo'], $k, false ) . '><span class="lm-logo__pic">' . $o[1] . '</span><span class="lm-logo__name"><span class="lm-radio" aria-hidden="true"></span>' . esc_html( $o[0] ) . '</span></label>' . $o[2] . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML costruito qui con valori già filtrati
 		}
-		echo '</div><input type="hidden" name="lu3g_m[logo_id]" value="' . (int) $s['logo_id'] . '" data-lm-logo-id><p class="lm-help">' . esc_html__( 'Il logo LU3G è pensato per lo sfondo scuro della schermata. Se il logo del sito o l\'immagine scelta mancano, si vede il logo LU3G.', 'lu3g-manutenzione' ) . '</p></div>';
+		echo '</div><input type="hidden" name="lu3g_m[logo_id]" value="' . (int) $s['logo_id'] . '" data-lm-logo-id></section>';
 
-		echo '<div class="lm-card"><h3>' . esc_html__( 'Accesso dal lucchetto', 'lu3g-manutenzione' ) . '</h3><div class="lm-grid">';
+		// Accesso dal lucchetto.
+		echo '<section class="lm-card">' . self::head( __( 'Accesso dal lucchetto', 'lu3g-manutenzione' ), __( 'Chi ha un account accede dalla schermata e vede il sito normalmente.', 'lu3g-manutenzione' ) ) . '<div class="lm-grid lm-grid--access">'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- head() fa l'escape
 		echo '<label class="lm-field"><span>' . esc_html__( 'Dopo l\'accesso vedono il sito', 'lu3g-manutenzione' ) . '</span><select name="lu3g_m[access]">';
 		foreach ( LU3G_Manutenzione_Settings::access_options() as $k => $label ) {
 			echo '<option value="' . esc_attr( $k ) . '" ' . selected( $s['access'], $k, false ) . '>' . esc_html( $label ) . '</option>';
 		}
-		echo '</select><small>' . esc_html__( 'Gli altri account, dopo l\'accesso, vedono ancora la schermata con un messaggio e il pulsante Esci.', 'lu3g-manutenzione' ) . '</small></label><div>';
+		echo '</select><small>' . esc_html__( 'Gli altri account, dopo l\'accesso, vedono ancora la schermata con un messaggio e il pulsante Esci.', 'lu3g-manutenzione' ) . '</small></label><div class="lm-box">';
 		self::toggle( 'lock', __( 'Mostra il lucchetto', 'lu3g-manutenzione' ), $s['lock'], __( 'In alto a destra nella schermata. Spento: si accede solo dalla pagina di accesso di WordPress.', 'lu3g-manutenzione' ) );
-		echo '</div></div><p class="lm-help">' . esc_html__( 'Il modulo invia le credenziali alla normale pagina di accesso di WordPress: funzionano captcha, limiti dei tentativi, verifica in due passaggi e indirizzi di accesso personalizzati. Se un plugin di sicurezza chiede un campo in più, usa il link "Pagina di accesso" nella finestra.', 'lu3g-manutenzione' ) . '</p></div>';
+		echo '</div></div><p class="lm-note">' . esc_html__( 'Il modulo invia le credenziali alla normale pagina di accesso di WordPress: funzionano captcha, limiti dei tentativi, verifica in due passaggi e indirizzi di accesso personalizzati. Se un plugin di sicurezza chiede un campo in più, nella finestra c\'è il link "Pagina di accesso".', 'lu3g-manutenzione' ) . '</p></section>';
 
-		echo '<div class="lm-savebar"><a class="lm-btn" href="' . esc_url( add_query_arg( LU3G_Manutenzione_Gate::PREVIEW, '1', home_url( '/' ) ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'Anteprima della schermata', 'lu3g-manutenzione' ) . '</a><button type="submit" class="lm-btn lm-btn--primary">' . esc_html__( 'Salva', 'lu3g-manutenzione' ) . '</button></div>';
+		echo '<details class="lm-card lm-card--soft lm-more"><summary>' . esc_html__( 'Se resti chiuso fuori', 'lu3g-manutenzione' ) . '</summary><p class="lm-help">' . esc_html__( 'La pagina di accesso di WordPress (wp-login.php) funziona sempre. In emergenza aggiungi a wp-config.php questa riga: spegne la schermata senza entrare nella bacheca.', 'lu3g-manutenzione' ) . '</p><pre class="lm-code">define( \'LU3G_MANUTENZIONE_OFF\', true );</pre></details>';
+
+		// Barra in basso, sempre visibile mentre si scorre.
+		echo '<div class="lm-savebar"><span class="lm-savebar__text">' . esc_html__( 'Le modifiche si vedono sul sito dopo il salvataggio.', 'lu3g-manutenzione' ) . '</span><span class="lm-savebar__actions"><a class="lm-btn" href="' . esc_url( add_query_arg( LU3G_Manutenzione_Gate::PREVIEW, '1', home_url( '/' ) ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'Anteprima', 'lu3g-manutenzione' ) . '</a><button type="submit" class="lm-btn lm-btn--primary">' . esc_html__( 'Salva', 'lu3g-manutenzione' ) . '</button></span></div>';
 		echo '</form>';
-
-		echo '<details class="lm-card lm-card--soft lm-more"><summary>' . esc_html__( 'Se resti chiuso fuori', 'lu3g-manutenzione' ) . '</summary><p class="lm-help">' . esc_html__( 'La pagina di accesso di WordPress (wp-login.php) funziona sempre. In emergenza aggiungi a wp-config.php questa riga: spegne la schermata senza entrare nella bacheca.', 'lu3g-manutenzione' ) . '</p><p><code>define( \'LU3G_MANUTENZIONE_OFF\', true );</code></p></details>';
 		echo '<p class="lm-foot">LU3G Manutenzione ' . esc_html( LU3G_MANUTENZIONE_VERSION ) . '</p></div>';
 	}
 }

@@ -1,5 +1,12 @@
 # Registro delle modifiche
 
+## 1.0.2
+- **Pannello riordinato**: ogni sezione ha titolo e una riga di spiegazione; interruttore principale con la pastiglia
+  Accesa/Spenta (bordo rosso quando è accesa, aggiornato subito); scelta del logo più compatta con anteprima su sfondo
+  scuro, pallino di selezione e pulsante "Scegli/Cambia immagine" sotto l'anteprima; lucchetto in un riquadro accanto
+  al menu di accesso e nota informativa separata; barra Salva fissa in basso con Anteprima; "Se resti chiuso fuori"
+  come ultima sezione con il codice in un riquadro. Foglio di stile ripulito dagli stili non usati.
+
 ## 1.0.1
 - Il pannello è sotto il menu **LU3G** (LU3G Hub), come gli altri plugin LU3G, non più in Impostazioni. Senza LU3G Hub
   compare la voce "LU3G Manutenzione" nel menu laterale.

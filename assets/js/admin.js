@@ -1,5 +1,6 @@
 /**
- * LU3G Manutenzione — pannello: scelta del logo (selezione evidenziata, immagine dalla Libreria media).
+ * LU3G Manutenzione — pannello: scelta del logo (selezione evidenziata, immagine dalla Libreria media) e stato
+ * dell'interruttore principale.
  */
 ( function () {
 	'use strict';
@@ -13,9 +14,24 @@
 			c.classList.toggle( 'is-checked', c.querySelector( 'input' ).checked );
 		} );
 	}
+	// Interruttore principale: pastiglia "Accesa/Spenta" e bordo rosso aggiornati subito (si salva con Salva).
+	var sw = form.querySelector( '.lm-card--switch' );
+	function syncSwitch() {
+		if ( ! sw ) {
+			return;
+		}
+		var on = sw.querySelector( 'input[type="checkbox"]' ).checked;
+		var pill = sw.querySelector( '.lm-pill' );
+		sw.classList.toggle( 'is-on', on );
+		pill.className = 'lm-pill ' + ( on ? 'is-on' : 'is-off' );
+		pill.textContent = on ? 'Accesa' : 'Spenta';
+	}
 	form.addEventListener( 'change', function ( e ) {
 		if ( e.target.name === 'lu3g_m[logo]' ) {
 			mark();
+		}
+		if ( e.target.name === 'lu3g_m[enabled]' ) {
+			syncSwitch();
 		}
 	} );
 
@@ -33,6 +49,11 @@
 					idField.value = a.id;
 					img.src = ( a.sizes && a.sizes.medium ? a.sizes.medium.url : a.url );
 					img.hidden = false;
+					var empty = form.querySelector( '[data-lm-logo-empty]' );
+					if ( empty ) {
+						empty.hidden = true;
+					}
+					pick.textContent = 'Cambia immagine';
 					var radio = form.querySelector( 'input[name="lu3g_m[logo]"][value="custom"]' );
 					radio.checked = true;
 					mark();
