@@ -1,0 +1,108 @@
+/* ==========================================================================
+ * LU3G Manutenzione — schermata per i visitatori.
+ * Stesso linguaggio dei plugin LU3G: nero #09090b, grigi zinco, bianco, Manrope.
+ * Classi con prefisso lu3g-m (la pagina non carica il tema, ma il prefisso evita sorprese).
+ * Le animazioni stanno dentro prefers-reduced-motion: no-preference.
+ * ======================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body.lu3g-m {
+	margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+	background: radial-gradient(120% 120% at 0% 0%, #27272a 0%, #09090b 55%) fixed #09090b;
+	color: #fafafa; font: 16px/1.6 "LU3G Manrope", Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	-webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+.lu3g-m a { color: inherit; }
+
+/* Riflessi di luce dietro il contenuto */
+.lu3g-m__bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.lu3g-m__glow { position: absolute; top: -40%; left: -20%; width: 80vw; height: 160vh; background: conic-gradient(from 180deg, rgba(255,255,255,0), rgba(255,255,255,.10), rgba(255,255,255,0) 40%); filter: blur(60px); opacity: .8; }
+.lu3g-m__glow--2 { top: auto; left: auto; right: -30%; bottom: -60%; width: 70vw; height: 120vh; opacity: .45; transform: rotate(180deg); }
+
+/* Contenuto centrale */
+.lu3g-m__main { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 96px 24px 48px; text-align: center; }
+.lu3g-m__logo { width: 112px; height: 112px; margin-bottom: 28px; display: grid; place-items: center; }
+.lu3g-m__logo svg { width: 100%; height: 100%; }
+.lu3g-m__logo img { max-width: 220px; max-height: 112px; width: auto; height: auto; object-fit: contain; }
+.lu3g-m__eyebrow { margin: 0 0 10px; color: #a1a1aa; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.lu3g-m__title { margin: 0; max-width: 18ch; font-size: clamp(32px, 6vw, 56px); font-weight: 800; line-height: 1.05; letter-spacing: -.03em; }
+.lu3g-m__text { margin: 18px 0 0; max-width: 520px; color: #d4d4d8; font-size: 17px; }
+.lu3g-m__note { display: inline-flex; align-items: center; gap: 10px; margin: 26px 0 0; padding: 9px 16px; border: 1px solid rgba(255,255,255,.1); border-radius: 999px; background: rgba(255,255,255,.05); color: #e4e4e7; font-size: 14px; font-weight: 600; }
+.lu3g-m__dot { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.18); }
+
+.lu3g-m__foot { position: relative; z-index: 1; padding: 0 24px 22px; color: #71717a; font-size: 12px; text-align: center; }
+.lu3g-m__foot a { color: #a1a1aa; text-decoration: none; }
+.lu3g-m__foot a:hover, .lu3g-m__foot a:focus { color: #fff; text-decoration: underline; }
+
+.lu3g-m__preview { position: fixed; z-index: 5; top: 16px; left: 50%; transform: translateX(-50%); margin: 0; padding: 6px 14px; border-radius: 999px; background: #f59e0b; color: #09090b; font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+/* Lucchetto in alto a destra */
+.lu3g-m__lock {
+	position: fixed; z-index: 3; top: 20px; right: 20px; width: 46px; height: 46px; display: grid; place-items: center;
+	padding: 0; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; background: rgba(255,255,255,.06); color: #fafafa;
+	cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.lu3g-m__lock:hover { background: rgba(255,255,255,.14); }
+.lu3g-m__lock:focus-visible, .lu3g-m__close:focus-visible, .lu3g-m__btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* Finestra di accesso */
+.lu3g-m__overlay { position: fixed; inset: 0; z-index: 8; background: rgba(9,9,11,.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.lu3g-m__dialog {
+	position: fixed; z-index: 9; top: 50%; left: 50%; width: min(400px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto;
+	transform: translate(-50%, -50%); padding: 30px 28px 24px; border-radius: 22px; background: #fff; color: #09090b;
+	box-shadow: 0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06);
+}
+.lu3g-m__overlay[hidden], .lu3g-m__dialog[hidden] { display: none; }
+.lu3g-m__close { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: #f4f4f5; color: #27272a; cursor: pointer; }
+.lu3g-m__close:hover { background: #e4e4e7; }
+.lu3g-m__dtitle { margin: 0 40px 6px 0; font-size: 22px; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; }
+.lu3g-m__dtext { margin: 0 0 18px; color: #71717a; font-size: 14px; line-height: 1.5; }
+.lu3g-m__error { margin: 0 0 16px; padding: 10px 14px; border-radius: 12px; background: #fef2f2; color: #991b1b; font-size: 14px; font-weight: 600; }
+.lu3g-m__form { display: grid; gap: 14px; }
+.lu3g-m__field { display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: #27272a; }
+.lu3g-m__field input {
+	width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid #d4d4d8; border-radius: 12px; background: #fff; color: #09090b;
+	font: inherit; font-size: 16px; font-weight: 500;
+}
+.lu3g-m__field input:focus { outline: none; border-color: #09090b; box-shadow: 0 0 0 3px rgba(9,9,11,.12); }
+.lu3g-m__check { display: flex; align-items: center; gap: 8px; color: #3f3f46; font-size: 14px; cursor: pointer; }
+.lu3g-m__check input { width: 18px; height: 18px; accent-color: #09090b; }
+.lu3g-m__btn {
+	display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 4px; padding: 12px 18px;
+	border: 0; border-radius: 12px; background: #09090b; color: #fff; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer;
+}
+.lu3g-m__btn:hover { background: #27272a; color: #fff; }
+.lu3g-m__links { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 16px 0 0; font-size: 13px; }
+.lu3g-m__links a { color: #52525b; }
+.lu3g-m__links a:hover { color: #09090b; }
+
+/* Telefono: la finestra di accesso sale dal basso */
+@media (max-width: 560px) {
+	.lu3g-m__lock { top: 14px; right: 14px; }
+	.lu3g-m__logo { width: 88px; height: 88px; }
+	.lu3g-m__dialog { top: auto; bottom: 0; left: 0; width: 100%; transform: none; border-radius: 22px 22px 0 0; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.lu3g-m__glow { animation: lu3g-m-drift 18s ease-in-out infinite alternate; }
+	.lu3g-m__glow--2 { animation-duration: 24s; }
+	.lu3g-m__main > * { animation: lu3g-m-in .8s cubic-bezier(.22,1,.36,1) both; }
+	.lu3g-m__main > :nth-child(2) { animation-delay: .06s; }
+	.lu3g-m__main > :nth-child(3) { animation-delay: .12s; }
+	.lu3g-m__main > :nth-child(4) { animation-delay: .18s; }
+	.lu3g-m__main > :nth-child(5) { animation-delay: .24s; }
+	.lu3g-m__dot { animation: lu3g-m-pulse 2s ease-in-out infinite; }
+	.lu3g-m__dialog:not([hidden]) { animation: lu3g-m-pop .35s cubic-bezier(.22,1,.36,1); }
+	.lu3g-m__overlay:not([hidden]) { animation: lu3g-m-fade .25s ease; }
+	.lu3g-m__lock { transition: background .2s, transform .2s; }
+	.lu3g-m__lock:hover { transform: scale(1.06); }
+	@keyframes lu3g-m-drift { to { transform: translate3d(8vw, 4vh, 0) rotate(12deg); } }
+	@keyframes lu3g-m-in { from { opacity: 0; transform: translateY(14px); } }
+	@keyframes lu3g-m-pulse { 50% { box-shadow: 0 0 0 8px rgba(245,158,11,0); } }
+	@keyframes lu3g-m-fade { from { opacity: 0; } }
+	@keyframes lu3g-m-pop { from { opacity: 0; transform: translate(-50%, -46%) scale(.97); } }
+	@media (max-width: 560px) {
+		@keyframes lu3g-m-pop { from { opacity: 0; transform: translateY(24px); } }
+	}
+}

@@ -1,0 +1,19 @@
+# Registro delle modifiche
+
+## 1.0.0
+Prima versione.
+- **Modalità manutenzione** (Impostazioni → Manutenzione): i visitatori vedono una schermata con il logo LU3G (oppure
+  il logo del sito o un'immagine a scelta), titolo, messaggio e una riga in evidenza facoltativa. Stato HTTP 503 con
+  Retry-After, noindex, mai salvata in cache.
+- **Lucchetto in alto a destra**: apre una finestra di accesso che invia le credenziali alla normale pagina di accesso di
+  WordPress (compatibile con captcha, limiti dei tentativi, 2FA, indirizzi di accesso personalizzati). Con credenziali
+  sbagliate si torna alla schermata con l'errore. Finestra accessibile: Esc, clic fuori, focus intrappolato e
+  restituito; su telefono sale dal basso.
+- **Chi vede il sito dopo l'accesso**: chi lavora sul sito (predefinito), solo amministratori o tutti gli utenti con un
+  account. Gli altri vedono un messaggio e il pulsante Esci.
+- **Cache**: accendendo, spegnendo o cambiando la schermata viene svuotata la cache delle pagine (WP Rocket, LiteSpeed,
+  W3 Total Cache, WP Super Cache, SiteGround, WP Fastest Cache, Breeze, Cache Enabler, Hummingbird, Nginx Helper).
+- API REST chiuse a chi non può vedere il sito; bacheca, wp-login.php, admin-ajax, cron e robots.txt raggiungibili.
+- Promemoria rosso "Manutenzione attiva" nella barra di amministrazione, avviso in Bacheca e Plugin, anteprima per gli
+  amministratori, uscita di emergenza con `define( 'LU3G_MANUTENZIONE_OFF', true );` in wp-config.php.
+- Aggiornamenti da GitHub (lu3gofficial/lu3g-manutenzione).
